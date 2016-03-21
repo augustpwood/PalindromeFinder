@@ -26,10 +26,15 @@ namespace PalindromeFinder
     {
         public static void Main(string[] args)
         {
-            //Get config
-            Configuration config = new Configuration();
+            try {
+                //Get config
+                Configuration config = new Configuration();
 
-            DoWork(config);
+                DoWork(config);
+            } catch (Exception e)
+            {
+                Console.WriteLine("Error encountered:{0}{1}:{2}", Environment.NewLine, e.GetType().ToString(), e.Message);
+            }
         }
 
         public static void DoWork(IConfiguration config)
@@ -38,20 +43,24 @@ namespace PalindromeFinder
             Console.WriteLine("Please enter text to search for palindromes:");
             string userInput = Console.ReadLine().ToLower();
 
-            //Get palindromes list
-            List<Palindrome> palindromes = PalindromeHelper.GetLongestPalindromesFromString(userInput, config.NumberOfPalindromesToReport, config.IgnorableCharacters);
-
-            //Report palindromes
-            bool atLeastOnePalindromePrinted = false;
-            foreach (Palindrome p in palindromes)
+            if (userInput.Length < 2) Console.WriteLine("At least two characters are needed to find any palindromes.");
+            else
             {
-                if (p != null)
+                //Get palindromes list
+                List<Palindrome> palindromes = PalindromeHelper.GetLongestPalindromesFromString(userInput, config.NumberOfPalindromesToReport, config.IgnorableCharacters);
+
+                //Report palindromes
+                bool atLeastOnePalindromePrinted = false;
+                foreach (Palindrome p in palindromes)
                 {
-                    Console.WriteLine(string.Format("Text: {0}, Index: {1}, Length: {2}", p.Text, p.Index, p.Length));
-                    atLeastOnePalindromePrinted = true;
+                    if (p != null)
+                    {
+                        Console.WriteLine(string.Format("Text: {0}, Index: {1}, Length: {2}", p.Text, p.Index, p.Length));
+                        atLeastOnePalindromePrinted = true;
+                    }
                 }
+                if (!atLeastOnePalindromePrinted) Console.WriteLine("No palindromes found in input.");
             }
-            if (!atLeastOnePalindromePrinted) Console.WriteLine("No palindromes found in input.");
         }
     }
 }
